@@ -11,3 +11,15 @@ assert.equal(r2.status,503);
 const r3=await worker.fetch(new Request(origin+'/api/odds?league=eng.1&id=123'),{});
 assert.equal((await r3.json()).status,'unconfigured');
 console.log('OK: página, sintaxis de scripts, agenda bloqueada, cuotas sin clave.');
+
+import { monteCarlo } from './worker/monte-carlo.js';
+import { distribution } from './worker/model.js';
+const sim=monteCarlo(distribution(1.5,1.1,-0.05));
+assert.equal(sim.n,10000);
+assert.ok(Math.abs(sim.markets[0][1].reduce((s,x)=>s+x[1],0)-1)<1e-12);
+assert.deepEqual(sim,monteCarlo(distribution(1.5,1.1,-0.05)));
+assert.ok(Math.abs(sim.mean[0]-1.5)<0.08);
+assert.ok(Math.abs(sim.mean[1]-1.1)<0.08);
+assert.equal(monteCarlo([{h:2,a:1,p:1}],100).scores[0].p,1);
+assert.ok(html.includes('SIMULACIÓN MONTE CARLO'));
+console.log('OK: Monte Carlo reproducible y mercados normalizados.');

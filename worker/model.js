@@ -1,3 +1,4 @@
+import { monteCarlo } from './monte-carlo.js';
 function fit(games){
  const names=[...new Set(games.flatMap(g=>g.teams.map(t=>t.id)))];const attack=Object.fromEntries(names.map(n=>[n,0]));const defense={...attack};let base=.15,home=.15;
  const latest=Date.parse(games.at(-1).date);
@@ -67,5 +68,5 @@ export function analyze(games,match){
   const [label,p]=options.reduce((best,option)=>option[1]>best[1]?option:best);
   return {market,label,p};
  }).sort((a,b)=>b.p-a.p);
- return {markets,best,sources,rates:[x,y],sample,total:games.length,rho,elo:scores,limited:games.length<24||Math.min(...sample)<5,scores:rows.sort((a,b)=>b.p-a.p).slice(0,5),validation:n?{n,brier:brier/n,logloss:loss/n,accuracy:hits/n}:null,from:games[0].date,to:games.at(-1).date,method:'Poisson con ataque, defensa, localía y ponderación temporal, con corrección Dixon–Coles. Elo ajusta el reparto de goles entre equipos. Con pocos resultados, las tasas se acercan a valores de referencia. La prueba cronológica 80/20 evalúa el modelo base de goles.'};
+ return {monteCarlo:monteCarlo(rows),markets,best,sources,rates:[x,y],sample,total:games.length,rho,elo:scores,limited:games.length<24||Math.min(...sample)<5,scores:rows.sort((a,b)=>b.p-a.p).slice(0,5),validation:n?{n,brier:brier/n,logloss:loss/n,accuracy:hits/n}:null,from:games[0].date,to:games.at(-1).date,method:'Poisson con ataque, defensa, localía y ponderación temporal, con corrección Dixon–Coles. Elo ajusta el reparto de goles entre equipos. Con pocos resultados, las tasas se acercan a valores de referencia. La prueba cronológica 80/20 evalúa el modelo base de goles.'};
 }
