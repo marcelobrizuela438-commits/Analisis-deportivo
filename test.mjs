@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import worker from './worker/index.js';
+const origin='https://example.test';
+const r=await worker.fetch(new Request(origin),{});
+assert.equal(r.status,200);
+const html=await r.text();
+assert.ok(html.includes('Mis picks'));
+for(const m of html.matchAll(/<script>([\s\S]*?)<\/script>/g)) new Function(m[1]);
+const r2=await worker.fetch(new Request(origin+'/api/picks',{headers:{'oai-authenticated-user-id':'forged'}}),{});
+assert.equal(r2.status,503);
+const r3=await worker.fetch(new Request(origin+'/api/odds?league=eng.1&id=123'),{});
+assert.equal((await r3.json()).status,'unconfigured');
+console.log('OK: página, sintaxis de scripts, agenda bloqueada, cuotas sin clave.');

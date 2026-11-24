@@ -1,0 +1,6 @@
+{
+  "name": "analisis-deportivo",
+  "main": "worker/index.js",
+  "compatibility_date": "2026-11-24",
+  "workers_dev": true
+}
